@@ -5,6 +5,7 @@ from azure.cosmosdb.table.tableservice import TableService
 from azure.cosmosdb.table.models import Entity
 
 import json
+import os
 
 class ExcelToAzure:
     """
@@ -99,8 +100,11 @@ def read_settings():
 
 settings = read_settings()
 
-excel_to_azure = ExcelToAzure(settings['account_name'], settings['account_key'], settings['table_name'])
-
-excel_to_azure.create_table()
-
-excel_to_azure.update_table('data.xlsx')
+# Update the Azure table with data from each Excel file in the data folder
+data_folder = 'data'
+for file_name in os.listdir(data_folder):
+    if file_name.endswith('.xlsx'):
+        table_name = os.path.splitext(file_name)[0]
+        excel_to_azure = ExcelToAzure(settings['account_name'], settings['account_key'], table_name)
+        excel_to_azure.create_table()
+        excel_to_azure.update_table(os.path.join(data_folder, file_name))

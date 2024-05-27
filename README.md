@@ -1,14 +1,23 @@
-# Excel to Azure Table Updater
+# Azure Table Update Script
 
-This project contains a Python script that updates an Azure table with data from an Excel file.
+This script updates an Azure table with data from Excel files. 
 
-## Dependencies
+## How it works
 
-The script uses the following Python libraries:
+1. The script first reads settings from a `settings.json` file. If the file does not exist, it will prompt the user to enter the Azure storage account name, account key, and table name. These settings are then saved to `settings.json` for future use.
 
+2. The script then iterates over all Excel files (`.xlsx`) in the `data` folder. For each file, it does the following:
+    - Extracts the table name from the file name (minus the extension)
+    - Creates an instance of the `ExcelToAzure` class with the account name, account key, and table name
+    - Calls the `create_table` method to create the table in Azure
+    - Calls the `update_table` method to update the table with the data from the Excel file
+
+## Requirements
+
+- Python 3
 - pandas
-- azure.cosmosdb.table.tableservice
-- azure.cosmosdb.table.models
+- azure-cosmosdb-table
+- openpyxl
 
 ## Class: ExcelToAzure
 
@@ -27,13 +36,16 @@ This class handles updating an Azure table with data from an Excel file.
 To use this script, you need to create an instance of the `ExcelToAzure` class with your Azure storage account name, access key, and the name of the Azure table. Then, you can call the `update_table` method with the path to your Excel file.
 
 ```python
-from update_azure_table import ExcelToAzure
-from settings import read_local_settings
+settings = read_settings()
 
-settings = read_local_settings()
-
-azure_updater = ExcelToAzure(settings['account_name'], settings['account_key'], settings['table_name'])
-azure_updater.update_table('path_to_my_excel_file.xlsx')
+# Update the Azure table with data from each Excel file in the data folder
+data_folder = 'data'
+for file_name in os.listdir(data_folder):
+    if file_name.endswith('.xlsx'):
+        table_name = os.path.splitext(file_name)[0]
+        excel_to_azure = ExcelToAzure(settings['account_name'], settings['account_key'], table_name)
+        excel_to_azure.create_table()
+        excel_to_azure.update_table(os.path.join(data_folder, file_name))
 ```
 
 ## Local settings file
