@@ -15,9 +15,9 @@ This script updates an Azure table with data from Excel files.
 ## Requirements
 
 - Python 3
-- pandas
-- azure-cosmosdb-table
-- openpyxl
+- pandas: Install with `pip3 install pandas`
+- azure-cosmosdb-table: Install with `pip3 install azure-cosmosdb-table`
+- openpyxl: Install with `pip3 install openpyxl`
 
 ## Class: ExcelToAzure
 
